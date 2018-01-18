@@ -1,6 +1,5 @@
 import quandl as Quandl
 import math, datetime
-from sklearn import cross_validation
 import numpy as np
 from sklearn import preprocessing, model_selection, svm
 from sklearn.linear_model import LinearRegression
@@ -32,34 +31,35 @@ x = preprocessing.scale(x)
 x_lately = x[-forecast_out:]
 x = x[:-forecast_out]
 # print("lately\r\n")
-print(x)
+# print(x)
 
 df.dropna(inplace = True)
 y = np.array(df['lable'])
 # print("np.array:\r\n")
-print(y)
+# print(y)
 
 
 x_train, x_test, y_train, y_test = model_selection.train_test_split(x,y,test_size = 0.5)
 
-a = np.array([[-1, -1], [-2, -1], [1, 1], [2, 1]])
-b = np.array([1, 1, 2, 2])
 
-clf = SVC()
-clf.fit(a, b)
-SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
-decision_function_shape='ovr', degree=3, gamma='auto', kernel='rbf',
-max_iter=-1, probability=False, random_state=None, shrinking=True,
-tol=0.001, verbose=False)
+# svr_lin = SVC(kernel='linear', C=1e3)
+# svr_poly = SVC(kernel='poly', C=1e3, degree= 2)
+svr_rbf = SVC(kernel='rbf',C=1e3, gamma=0.1)
+# svr_lin.fit(x_train, y_train)
+# svr_poly.fit(x_train, y_train)
+svr_rbf.fit(x_train, y_train)
+
+# predictions_lin = svr_lin.predict(x_test)
+# predictions_poly = svr_poly.predict(x_test)
+predictions_rbf = svr_rbf.predict(x_test)
 
 # Compare Algorithms
 fig = plt.figure()
 fig.suptitle('Algorithm Comparison')
 ax = fig.add_subplot(111)
-plt.plot(a)
-plt.plot(b)
-plt.legend(loc=4)
+plt.plot(predictions_rbf)
+plt.plot(y_test)
+plt.legend()
 
 # ax.set_xticklabels(names)
 plt.show()
-print(clf.predict(x_test))
